@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewData["Title"] = "Login - Json Web Token";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+	<form>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				<label for="fieldEmail">Email</label>
+				<input id="fieldEmail" name="fieldEmail" class="form-control" value="test@test.test" />
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				<label for="fieldPassword">Password</label>
+				<input id="fieldPassword" name="fieldPassword" class="form-control" value="P@ssw0rd!" />
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				<label>&nbsp;</label><br />
+				<button id="buttonLogin" type="button" class="btn btn-default">Login</button>
+			</div>
+		</div>
+
+	</form>
+</div>
+
+<div class="row">
+	<div class="col-sm-12 form-group">
+		<h3>Ajax calls on login</h3>
+	</div>
+
+	<div class="col-sm-12 form-group">
+		<h4>Login</h4>
+		<div><pre>POST -> /Account/LoginWithJwt</pre></div>
+		<div><pre id="jwtToken" style="overflow-x:scroll;">&nbsp;</pre></div>
+	</div>
+
+	<div class="col-sm-6 form-group">
+		<h4>Test Jwt Bearer for api with policy = "Jwt"</h4>
+		<div><pre>GET -> /Test/IsJwtAuthenticated</pre></div>
+		<div><pre id="resultJwt">&nbsp;</pre></div>
+	</div>
+
+	<div class="col-sm-6 form-group">
+		<h4>Test Jwt Bearer for api with Identity Cookie</h4>
+		<div><pre>GET -> /Test/IsCookieAuthenticated</pre></div>
+		<div><pre id="resultCookie">&nbsp;</pre></div>
+	</div>
+
+</div>
+
+
+<style>
+	pre { color:blue; background-color:#ccc; }
+</style>
+
+@section scripts
+	{
+	<script>
+		$(document).ready(function () {
+			var login = function () {
+				$.post({
+					url: "/account/loginwithjwt",
+					data: JSON.stringify({ email: $("#fieldEmail").val(), password: $("#fieldPassword").val() }),
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function (response) {
+						$("#jwtToken").text(response.token);
+						testBearer();
+						testCookie();
+					},
+					error: function (xhr) {
+						$("#jwtToken").text(xhr.responseText.trim());
+						testBearer();
+						testCookie();
+					}
+				});
+			}
+
+			var testBearer = function () {
+				$.get({
+					url: "/test/IsJwtAuthenticated",
+					headers: {
+						"Authorization": "Bearer " + $("#jwtToken").text()
+					},
+					success: function (response) {
+						$("#resultJwt").text(response);
+					},
+					error: function (xhr) {
+						$("#resultJwt").text(xhr.responseText.trim());
+					}
+				});
+			}
+
+			var testCookie = function () {
+				$.get({
+					url: "/test/IsCookieAuthenticated",
+					success: function (response) {
+						$("#resultCookie").text(response);
+					},
+					error: function (xhr) {
+						console.log(xhr.responseText)
+						$("#resultCookie").text(xhr.responseText.trim());
+					}
+				});
+			}
+
+			$("#buttonLogin").click(function () {
+				login();
+			});
+		});
+	</script>
+}

@@ -1,0 +1,30 @@
+﻿@{
+	ViewData["Title"] = "Cookie and JWT Authentication";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+	<div class="col-md-6">
+		<h3>Project</h3>
+		<ul>
+			<li>This MVC project apply both Cookie and JWT authentication.</li>
+			<li>Cookie -> through login page out-of-the-box when creating a MVC project for Core 2.0.</li>
+			<li>JWT - > login without login form, eg service. To expose controller / action or other API to accept JWT authentication you must add <code>[Authorize(Policy = "Jwt")]</code></li>
+			<li>JWT protected API is registered as Policy named "Jwt".</li>
+			<li>Cors is set to accept calls from same origin but can easily be changed by adding more origins.</li>
+			<li>Database is attached in <code>wwwroot/app_data</code> folder.</li>
+			<li>User <code>test@test.test</code> and two roles exists in database or will be created on startup.</li>
+		</ul>			
+	</div>
+	<div class="col-md-6">
+		<h3>Test and Jwt Login API's</h3>
+		<ul>
+			<li><code>GET -> /Test/IsCookieAuthenticated</code><br />User need to be login by using form login.</li>
+			<li><code>GET -> /Test/IsJwtAuthenticated</code><br />User need to login and send request with Jwt Bearer in header.</li>
+			<li><code>GET -> /Test/IsAnonymous</code><br />Open for all.</li>
+			<li><code>GET -> /Test/IsAdmin</code><br />Check to see if cookie autheticated user have Admin role.</li>
+			<li><code>POST -> /Account/LoginWithJwt</code><br />Login and get token to be supplied in request header.</li>
+		</ul>
+	</div>
+</div>
